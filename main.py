@@ -13,7 +13,7 @@ class Booking(BaseModel):
     customer_name : str
     customer_phone : str
     customer_email : str
-    room_number : str
+    room_number : int
     reservation_description : str
     reservation_date : date
 
@@ -23,6 +23,13 @@ def get_reservation():
 
 @app.post("/booking",response_model=List[Booking],status_code=200)
 def create_reservation(booking: Booking):
+
+    if booking.room_number < 1 or booking.room_number > 9 :
+        return JSONResponse(
+            status_code=400,
+            content={"message": "Room number must be between 1 and 9"}
+        )
+
     for existing_booking in bookings:
         if(
             existing_booking.room_number == booking.room_number
